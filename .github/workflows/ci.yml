@@ -39,7 +39,7 @@ jobs:
       - name: Run Automated tests
         run: |
           python -m pytest -v
-        
+
       #Step 4: Build docker image for the iris ml api
       - name: Build Docker image
         run: |
