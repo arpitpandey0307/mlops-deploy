@@ -11,7 +11,7 @@ on:
 
 #permission are restricted to read-only for security reasons
 permissions:
-  content: read
+  contents: read
 
 #Define jobs that make up the pipeline 
 jobs:
