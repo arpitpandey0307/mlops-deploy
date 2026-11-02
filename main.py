@@ -11,7 +11,7 @@ import numpy as np
 #Mlflow configuration
 MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://127.0.0.1:7001")
 
-MODEL_URI = "models:/Iris_Classifier@champion"
+MODEL_URI = "models:/IrisRandomForestModel@champion"
 
 mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 
@@ -22,7 +22,7 @@ try:
     #Load the champion model at the application startup
     model = mlflow.sklearn.load_model(MODEL_URI)
     client = mlflow.tracking.MlflowClient()
-    champion_version = client.get_model_version_by_alias(name="Iris_Classifier", alias="champion")
+    champion_version = client.get_model_version_by_alias(name="IrisRandomForestModel", alias="champion")
 
     model_version = champion_version.version
     print(f"Loaded champion model version: {model_version} from MLflow Model Registry")
