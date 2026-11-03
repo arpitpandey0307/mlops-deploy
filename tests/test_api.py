@@ -1,10 +1,31 @@
 #Import Testclient so we can send simulated HTTP requests directly to the FASTAPI
 from fastapi.testclient import TestClient
+from mlflow import pytest
 #Import the app object from the main.py file
-from main import app
+from main import create_app
 
 #Create a reusable test client that will be used to send requests to the API
-client = TestClient(app)
+#client = TestClient(app)
+
+#The test will no longer use the actual model, but instead will use a fake model that always returns a fixed prediction. This allows us to test the API without relying on the actual model being available or trained.
+class FakeIrisModel:
+    def predict(self, features):
+        #Return a fixed prediction for testing purposes
+        return [0]  # Always predict class 0 (setosa)
+
+def fake_model_loader():
+    #Return an instance of the FakeIrisModel for testing purposes
+    return FakeIrisModel()
+
+def fake_version_loader():
+    #Return a fixed model version for testing purposes
+    return "test-version"
+
+@pytest.fixture
+def client():
+    app= create_app(model_loader=fake_model_loader, version_loader=fake_version_loader)
+    with TestClient(app) as test_client:
+        yield test_client
 
 def test_health_endpoint():
     #Send a GET request to the /health endpoint
