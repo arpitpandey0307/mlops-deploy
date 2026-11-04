@@ -1,6 +1,6 @@
 #Import Testclient so we can send simulated HTTP requests directly to the FASTAPI
 from fastapi.testclient import TestClient
-from mlflow import pytest
+import pytest
 #Import the app object from the main.py file
 from main import create_app
 
@@ -27,7 +27,7 @@ def client():
     with TestClient(app) as test_client:
         yield test_client
 
-def test_health_endpoint():
+def test_health_endpoint(client):
     #Send a GET request to the /health endpoint
     #Verify that the application is running and responding correctly by testing the /health endpoint
     response = client.get("/health")
@@ -37,7 +37,7 @@ def test_health_endpoint():
     #Assert that the response JSON matches the expected output
     assert response.json() == {"status": "healthy"}
 
-def test_valid_iris_prediction():
+def test_valid_iris_prediction(client):
     #verify that valid flower measurement produces the predict
     #Send a POST request to the /predict endpoint with valid input data
     #Test the /predict endpoint with valid input data to ensure that the model is making predictions correctly.

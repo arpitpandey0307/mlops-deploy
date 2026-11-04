@@ -39,7 +39,7 @@ def create_app(
             return champion_version.version
         
     @asynccontextmanager
-    def lifespan(app: FastAPI):
+    async def lifespan(app: FastAPI):
         try:
             app.state.model = model_loader()
         except Exception as ex:
@@ -54,35 +54,37 @@ def create_app(
         app.state.model_version = version_loader()
         yield
 
-        app = FastAPI(
+    app = FastAPI(
         title="Iris Classifiaction API",
         description="Iris prediction API powered by MLFlow",
         version="3.0.0",
         lifespan=lifespan
     )
 
-        @app.get("/")
-        def health_check():
-            return {"status": "Ready to serve"}
+    @app.get("/")
+    def health_check():
+        return {"status": "Ready to serve"}
 
-        @app.get("/health")
-        def health_check():
-            return {"status": "healthy"}
+    @app.get("/health")
+    def health_check():
+        return {"status": "healthy"}
 
-        @app.post("/predict")
-        def predict(data: IrisInput, request: Request):
-            model = request.app.state.model
-            features = [[
-                data.sepal_length,
-                data.sepal_width,
-                data.petal_length,
-                data.petal_width
-            ]]
-            prediction = int(model.predict(features)[0])
-            return {
-                "prediction": prediction,
-                "class_name": ["setosa", "versicolor", "virginica"][prediction]
-            }
+    @app.post("/predict")
+    def predict(data: IrisInput, request: Request):
+        model = request.app.state.model
+        features = [[
+            data.sepal_length,
+            data.sepal_width,
+            data.petal_length,
+            data.petal_width
+        ]]
+        prediction = int(model.predict(features)[0])
+        return {
+            "prediction": prediction,
+            "class_name": ["setosa", "versicolor", "virginica"][prediction]
+        }
+
+    return app
 
 app = create_app()
 
